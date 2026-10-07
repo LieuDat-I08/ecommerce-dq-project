@@ -8,7 +8,7 @@ lượng dữ liệu ứng dụng trong phân tích hành vi mua sắm Thương 
 
 | Tên | Vai trò |
 |---|---|
-| Liêu Văn Đạt | Trưởng nhóm — Orchestration & Tích hợp hệ thống |
+| Liêu Văn Đạt | Orchestration & Tích hợp hệ thống |
 | Phan Hữu Đức | Ingestion & Data Source |
 | Nguyễn Thanh Bình | Transformation (dbt) |
 | Nguyễn Hoàng Hải | Data Observability |
