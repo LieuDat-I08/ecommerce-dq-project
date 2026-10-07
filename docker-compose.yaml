@@ -1,0 +1,77 @@
+version: "3.8"
+
+
+# Kestra vẫn cần 1 database riêng (kestra-postgres) để lưu trạng thái/
+# lịch sử chạy flow của chính nó -- không liên quan đến dữ liệu dự án.
+
+services:
+
+  # Database nội bộ của Kestra
+  kestra-postgres:
+    image: postgres:15
+    container_name: kestra-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kestra
+      POSTGRES_USER: kestra
+      POSTGRES_PASSWORD: kestra_pw
+    volumes:
+      - kestra-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kestra -d kestra"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - pipeline-net
+
+  # Kestra
+  kestra:
+    image: kestra/kestra:latest
+    container_name: kestra
+    restart: unless-stopped
+    command: server standalone
+    environment:
+      KESTRA_CONFIGURATION: |
+        datasources:
+          postgres:
+            url: jdbc:postgresql://kestra-postgres:5432/kestra
+            driverClassName: org.postgresql.Driver
+            username: kestra
+            password: kestra_pw
+        kestra:
+          server:
+            basicAuth:
+              enabled: false
+          repository:
+            type: postgres
+          storage:
+            type: local
+            local:
+              base-path: "/app/storage"
+          queue:
+            type: postgres
+      # Biến môi trường chuẩn của Google Cloud SDK: mọi thư viện/task
+      # bên trong container (bao gồm task Python gọi BigQuery) sẽ tự
+      # động dùng key này để xác thực, không cần cấu hình thêm trong
+      # từng flow.
+      GOOGLE_APPLICATION_CREDENTIALS: /app/secrets/bigquery-key.json
+    volumes:
+      - kestra-data:/app/storage
+      - /var/run/docker.sock:/var/run/docker.sock        # cho phép Kestra tự chạy task dạng Docker container
+      - ./secrets:/app/secrets:ro                          # mount thư mục chứa key BigQuery (read-only)
+    ports:
+      - "8080:8080"   # giao diện web Kestra: http://localhost:8080
+    depends_on:
+      kestra-postgres:
+        condition: service_healthy
+    networks:
+      - pipeline-net
+
+volumes:
+  kestra-postgres-data:
+  kestra-data:
+
+networks:
+  pipeline-net:
+    driver: bridge

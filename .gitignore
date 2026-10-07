@@ -1,0 +1,15 @@
+# service account key
+secrets/
+*.json
+
+# Dữ liệu/volume local
+.env
+*.log
+__pycache__/
+.venv/
+venv/
+
+# dbt
+target/
+dbt_packages/
+logs/
