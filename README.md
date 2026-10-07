@@ -21,7 +21,7 @@ lượng dữ liệu ứng dụng trong phân tích hành vi mua sắm Thương 
 ├── dbt/              # Bình — staging, marts
 ├── observability/    # Hải — module DQ, Great Expectations
 ├── orchestration/    # Đạt — Kestra flows
-├── docs/             # Sơ đồ kiến trúc, báo cáo
+├── docs/             # Sơ đồ kiến trúc
 ├── secrets/          # KHÔNG commit — key BigQuery (đã .gitignore)
 └── docker-compose.yaml
 ```
