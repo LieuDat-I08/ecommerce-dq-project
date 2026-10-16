@@ -27,3 +27,10 @@ lượng dữ liệu ứng dụng trong phân tích hành vi mua sắm Thương 
 ├── orchestration/    # Định nghĩa flow điều phối tự động
 ├── docs/             # Sơ đồ kiến trúc và tài liệu dự án
 └── docker-compose.yaml
+
+## Project Structure
+
+```text
+1. Cách chạy dự án: tạo thư mục secrets xong tải file service account và đổi tên thành bigquery-key.json (ai có nhu cầu thao tác với big query thì liên hệ Hải lấy file)
+2. Tải dataset về máy
+3. Sửa lại đường dẫn đến thư mục lưu dataset ở máy trong file docker-compose.yaml
