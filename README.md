@@ -27,7 +27,7 @@ lượng dữ liệu ứng dụng trong phân tích hành vi mua sắm Thương 
 ├── orchestration/    # Định nghĩa flow điều phối tự động
 ├── docs/             # Sơ đồ kiến trúc và tài liệu dự án
 └── docker-compose.yaml
-
+``` 
 ## Project Structure
 
 ```text
