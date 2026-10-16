@@ -1,5 +1,3 @@
-version: "3.8"
-
 
 # Kestra vẫn cần 1 database riêng (kestra-postgres) để lưu trạng thái/
 # lịch sử chạy flow của chính nó -- không liên quan đến dữ liệu dự án.
@@ -29,6 +27,7 @@ services:
   kestra:
     image: kestra/kestra:latest
     container_name: kestra
+    user: "root"
     restart: unless-stopped
     command: server standalone
     environment:
@@ -59,7 +58,9 @@ services:
     volumes:
       - kestra-data:/app/storage
       - /var/run/docker.sock:/var/run/docker.sock        # cho phép Kestra tự chạy task dạng Docker container
-      - ./secrets:/app/secrets:ro                          # mount thư mục chứa key BigQuery (read-only)
+      - ./secrets:/app/secrets:ro
+      - "E:/DataEngineering/ecommerce-dq-project/data:/data/olist:ro" #Nếu chạy bằng powershell thì thay link theo format này và thay đường dẫn (trong thư mục data chứa 9 file csv)
+      #- /mnt/e/Documents/LAB/Nghien_Cuu_Khoa_Hoc_2026-2027_Pipeline/Dataset_Olist:/data/olist:ro nếu dùng bash thì link theo format này, xóa dòng trên và thay đường dẫn (trong thư mục data chứa 9 file csv)
     ports:
       - "8080:8080"   # giao diện web Kestra: http://localhost:8080
     depends_on:

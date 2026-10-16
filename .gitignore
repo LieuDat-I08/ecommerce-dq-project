@@ -1,6 +1,7 @@
 # service account key
 secrets/
 *.json
+.env_encoded
 
 # Dữ liệu/volume local
 .env
@@ -13,3 +14,6 @@ venv/
 target/
 dbt_packages/
 logs/
+
+#data
+data
