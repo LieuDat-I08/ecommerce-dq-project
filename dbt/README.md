@@ -1,11 +1,15 @@
-# dbt — Transformation
+Welcome to your new dbt project!
 
-Phụ trách: Nguyễn Thanh Bình
+### Using the starter project
 
-- `models/staging/` — làm sạch dữ liệu thô (1 bảng raw <-> 1 model staging).
-- `models/marts/` — star schema.
-- `tests/` — dbt tests tuỳ chỉnh ngoài schema.yml.
-- `macros/` — SQL macro dùng chung giữa nhiều model.
+Try running the following commands:
+- dbt run
+- dbt test
 
-Lưu ý: project dbt thật sự (dbt_project.yml, profiles.yml...) sẽ được
-khởi tạo bằng lệnh `dbt init` chạy ngay trong thư mục này.
+
+### Resources:
+- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
+- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
+- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
+- Find [dbt events](https://events.getdbt.com) near you
+- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
