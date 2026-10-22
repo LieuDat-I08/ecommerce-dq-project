@@ -1,0 +1,170 @@
+version: 2
+
+models:
+
+  # -------------------------test relationship giữa bảng customer và bảng orders------------------------
+  - name: stg_orders
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+
+  - name: stg_customers
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_unique_id
+        tests:
+          - not_null          # KHÔNG test unique ở cột này
+      - name: zip_code_prefix
+        tests:
+          - not_null
+      
+
+    # -------------------------Test bảng order_payments-----------------------
+  - name: stg_order_payments
+    # Khóa chính là cặp (order_id, payment_sequential)
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [order_id, payment_sequential]
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: payment_sequential
+        tests: [not_null]
+      - name: payment_type
+        tests:
+          - accepted_values:
+              values: [credit_card, boleto, voucher, debit_card, not_defined]
+      - name: payment_value
+        tests: [not_null]
+    # --------------------TEST ORDER_REVIEW--------------------------
+  - name: stg_order_reviews
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [review_id, order_id]
+    columns:
+      - name: review_id
+        tests: [not_null]          # KHÔNG test unique ở cột này
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: review_score
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4, 5]
+              quote: false
+      - name: creation_date
+        tests: [not_null]
+    # -------------------TEST PRODUCT_CATEGORY_TRANSLATION-------------
+  - name: stg_product_category_translation
+    columns:
+      - name: product_category_name
+        tests: [unique, not_null]
+      - name: product_category_name_english
+        tests: [not_null]
+  # ---------------------TEST PRODUCTS---------------------------
+  - name: stg_products
+    columns:
+      - name: product_id
+        tests: [unique, not_null]
+      - name: product_category_name
+        tests:
+          - relationships:
+              to: ref('stg_product_category_translation')
+              field: product_category_name
+              config:
+                severity: warn
+      - name: product_weight_g
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              config:
+                severity: warn
+      - name: product_photos_qty
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              config:
+                severity: warn
+  #------------------------TEST SELLERS---------------------------
+  - name: stg_sellers
+    columns:
+      - name: seller_id
+        tests: [unique, not_null]
+      - name: zip_code_prefix
+        tests: [not_null]
+      - name: city
+        tests: [not_null]
+  #----------------------TEST ORDER_ITEMS---------------------------
+  - name: stg_order_items
+    columns:
+      - name: order_item_key
+        tests: [unique, not_null]
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: order_item_id
+        tests: [not_null]
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_products')
+              field: product_id
+      - name: seller_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_sellers')
+              field: seller_id
+      - name: shipping_limit_at
+        tests: [not_null]
+      - name: price
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: false
+      - name: freight_value
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+  #---------------------------GEOLOCATION---------------------------
+  - name: stg_geolocation
+    columns:
+      - name: zip_code_prefix
+        tests: [unique, not_null]
+      - name: lat
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: -34
+              max_value: 6
+      - name: lng
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: -74
+              max_value: -34
